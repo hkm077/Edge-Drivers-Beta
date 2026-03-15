@@ -35,8 +35,9 @@ local get_Groups = capabilities["legendabsolute60149.getGroups"]
 
 ---- mode handler
 local data_types = require "st.zigbee.data_types"
-local function info_changed(driver, device)
-  local mode = device.preferences.switchMode
+local zcl_global = require "st.zigbee.zcl.global"
+local function set_switch_mode(driver, device)
+  local mode = device.preferences.switchMode or "edge"
   if not mode then return end
   local value = 0
   if mode == "toggle" then
@@ -45,7 +46,7 @@ local function info_changed(driver, device)
     value = 2
   end
   device:send(
-    zigbee.write_attribute(
+    ZigbeeDriver.write_attribute(
       0xFC57,
       0x0000,
       data_types.Uint8,
@@ -180,12 +181,14 @@ local zigbee_switch_driver_template = {
     capabilities.refresh
   },
   lifecycle_handlers = {
-    infoChanged = random.do_Preferences,
+    infoChanged = function(driver, device, event)
+        random.do_Preferences(driver, device, event)
+        set_switch_mode(driver, device, event)
+    end,
     init = random.do_init,
     removed = random.do_removed,
     driverSwitched = driver_Switched,
-    doConfigure = do_configure,
-    infoChanged = info_changed
+    doConfigure = do_configure
   },
   capability_handlers = {
     [energy_Reset.ID] = {
