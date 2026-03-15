@@ -47,6 +47,7 @@ local function set_switch_mode(driver, device)
   end
   device:send(
     zigbee.write_attribute(
+      device,
       0xFC57,
       0x0000,
       data_types.Uint8,
