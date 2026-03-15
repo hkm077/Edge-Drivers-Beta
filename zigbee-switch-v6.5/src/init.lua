@@ -32,6 +32,28 @@ local energy_Reset = capabilities["legendabsolute60149.energyReset1"]
 local get_Groups = capabilities["legendabsolute60149.getGroups"]
 --local signal_Metrics = capabilities["legendabsolute60149.signalMetrics"]
 
+
+---- mode handler
+local data_types = require "st.zigbee.data_types"
+local function info_changed(driver, device)
+  local mode = device.preferences.switchMode
+  if not mode then return end
+  local value = 0
+  if mode == "toggle" then
+    value = 1
+  elseif mode == "detached" then
+    value = 2
+  end
+  device:send(
+    zigbee.write_attribute(
+      0xFC57,
+      0x0000,
+      data_types.Uint8,
+      value
+    )
+  )
+end
+
   ---- setEnergyReset_handler
 local function setEnergyReset_handler(self,device,command)
   --print("command.args.value >>>>>", command.args.value)
@@ -162,7 +184,8 @@ local zigbee_switch_driver_template = {
     init = random.do_init,
     removed = random.do_removed,
     driverSwitched = driver_Switched,
-    doConfigure = do_configure
+    doConfigure = do_configure,
+    infoChanged = info_changed
   },
   capability_handlers = {
     [energy_Reset.ID] = {
