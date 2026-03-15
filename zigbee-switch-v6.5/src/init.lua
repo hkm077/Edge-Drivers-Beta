@@ -35,7 +35,7 @@ local get_Groups = capabilities["legendabsolute60149.getGroups"]
 
 ---- mode handler
 local data_types = require "st.zigbee.data_types"
-local zcl_global = require "st.zigbee.zcl.global"
+local zigbee = require "st.zigbee"
 local function set_switch_mode(driver, device)
   local mode = device.preferences.switchMode or "edge"
   if not mode then return end
@@ -46,7 +46,7 @@ local function set_switch_mode(driver, device)
     value = 2
   end
   device:send(
-    zcl_global.write_attribute(
+    zigbee.write_attribute(
       0xFC57,
       0x0000,
       data_types.Uint8,
