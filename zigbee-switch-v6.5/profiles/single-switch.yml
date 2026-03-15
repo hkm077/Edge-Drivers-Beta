@@ -176,6 +176,17 @@ preferences:
     preferenceType: boolean
     definition:
       default: false
+  - name: switchMode
+    title: External Switch Mode
+    description: Select external switch mode
+    required: false
+    preferenceType: enumeration
+    definition:
+      options:
+        edge: Edge
+        toggle: Toggle
+        detached: Detached
+      default: edge
 metadata:
   #deviceType: Switch
   #ocfDeviceType: oic.d.switch
