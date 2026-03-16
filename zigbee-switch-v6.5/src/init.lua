@@ -178,14 +178,18 @@ local function apply_zbminil2_mode(device)
   end
 
   local mode = 0
+  local pref = tostring(device.preferences.switchMode)
 
-  if device.preferences.switchMode == "edge" then
+  if pref == "edge" then
     mode = 0
-  elseif device.preferences.switchMode == "toggle" then
+  elseif pref == "toggle" then
     mode = 1
-  elseif device.preferences.switchMode == "momentary" then
+  elseif pref == "momentary" then
     mode = 2
   end
+
+  print("ZBMINIL2 mode pref str :", pref)
+  print("ZBMINIL2 mode apply:", mode)
 
   set_zbminil2_mode(device, mode)
 end
