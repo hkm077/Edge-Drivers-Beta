@@ -148,6 +148,44 @@ end
     --lazy-v2
   local lazy_load_if_possible = require "lazy_load_subdriver"
 
+-- set zbminil2 mode
+local data_types = require "st.zigbee.data_types"
+
+local function set_zbminil2_mode(device, mode)
+  local cluster_id = 0xFC11
+  local attr_id = 0x0000
+  local mfg_code = 0x1286
+  device:send(
+    device:write_manufacturer_specific_attribute(
+      cluster_id,
+      attr_id,
+      mfg_code,
+      data_types.Uint8,
+      mode
+    )
+  )
+  print("ZBMINIL2 mode set to:", mode)
+end
+
+local function apply_zbminil2_mode(device)
+
+  if device:get_model() ~= "ZBMINIL2" then
+    return
+  end
+
+  local mode = 0
+
+  if device.preferences.switchMode == "edge" then
+    mode = 0
+  elseif device.preferences.switchMode == "toggle" then
+    mode = 1
+  elseif device.preferences.switchMode == "momentary" then
+    mode = 2
+  end
+
+  set_zbminil2_mode(device, mode)
+end
+
 ---- Driver template config
 local zigbee_switch_driver_template = {
   supported_capabilities = {
@@ -158,8 +196,14 @@ local zigbee_switch_driver_template = {
     capabilities.refresh
   },
   lifecycle_handlers = {
-    infoChanged = random.do_Preferences,
-    init = random.do_init,
+    infoChanged = function(self, device, event, args)
+      random.do_Preferences(self, device, event, args)
+      apply_zbminil2_mode(device)
+    end
+    init = function(self, device)
+      random.do_init(self, device)
+      set_zbminil2_mode(device)
+    end,
     removed = random.do_removed,
     driverSwitched = driver_Switched,
     doConfigure = do_configure
