@@ -185,7 +185,7 @@ preferences:
       options:
         edge: Edge
         toggle: Toggle
-        detached: Detached
+        momentary: Momentary
       default: edge
 metadata:
   #deviceType: Switch
