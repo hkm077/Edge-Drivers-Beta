@@ -149,22 +149,31 @@ end
   local lazy_load_if_possible = require "lazy_load_subdriver"
 
 -- set zbminil2 mode
+local cluster_base = require "st.zigbee.cluster_base"
 local data_types = require "st.zigbee.data_types"
 
-local function set_zbminil2_mode(device, mode)
-  local cluster_id = 0xFC11
-  local attr_id = 0x0000
-  local mfg_code = 0x1286
-  device:send(
-    device:write_manufacturer_specific_attribute(
-      cluster_id,
-      attr_id,
-      mfg_code,
-      data_types.Uint8,
-      mode
-    )
+local function set_zbminil2_mode(device)
+  if device:get_model() ~= "ZBMINIL2" then
+    return
+  end
+  local mode = 0
+  if device.preferences.switchMode == "toggle" then
+    mode = 0
+  elseif device.preferences.switchMode == "edge" then
+    mode = 1
+  elseif device.preferences.switchMode == "momentary" then
+    mode = 2
+  end
+
+  local write = cluster_base.write_manufacturer_specific_attribute(
+      device,
+      0xFC57, -- cluster
+      0x0000, -- attribute
+      0x1286, -- manufacturer
+      data_types.Uint8(mode)
   )
-  print("ZBMINIL2 mode set to:", mode)
+  device:send(write)
+  print("ZBMINIL2 mode set:", mode)
 end
 
 local function apply_zbminil2_mode(device)
