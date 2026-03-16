@@ -199,7 +199,7 @@ local zigbee_switch_driver_template = {
     infoChanged = function(self, device, event, args)
       random.do_Preferences(self, device, event, args)
       apply_zbminil2_mode(device)
-    end
+    end,
     init = function(self, device)
       random.do_init(self, device)
       set_zbminil2_mode(device)
