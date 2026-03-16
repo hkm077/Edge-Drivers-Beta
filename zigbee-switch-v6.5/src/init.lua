@@ -152,7 +152,7 @@ end
 local cluster_base = require "st.zigbee.cluster_base"
 local data_types = require "st.zigbee.data_types"
 
-local function set_zbminil2_mode(device)
+local function set_zbminil2_mode(device, mode)
   if device:get_model() ~= "ZBMINIL2" then
     return
   end
@@ -204,7 +204,10 @@ local zigbee_switch_driver_template = {
       random.do_Preferences(self, device, event, args)
       apply_zbminil2_mode(device)
     end,
-    init = random.do_init,
+    init = function(self, device)
+      random.do_init(self, device)
+      apply_zbminil2_mode(device)
+    end,
     removed = random.do_removed,
     driverSwitched = driver_Switched,
     doConfigure = do_configure
