@@ -156,14 +156,6 @@ local function set_zbminil2_mode(device)
   if device:get_model() ~= "ZBMINIL2" then
     return
   end
-  local mode = 0
-  if device.preferences.switchMode == "toggle" then
-    mode = 0
-  elseif device.preferences.switchMode == "edge" then
-    mode = 1
-  elseif device.preferences.switchMode == "momentary" then
-    mode = 2
-  end
 
   local write = cluster_base.write_manufacturer_specific_attribute(
       device,
@@ -179,6 +171,9 @@ end
 local function apply_zbminil2_mode(device)
 
   if device:get_model() ~= "ZBMINIL2" then
+    return
+  end
+  if device.preferences.switchMode == nil then
     return
   end
 
