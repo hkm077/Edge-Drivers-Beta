@@ -157,13 +157,20 @@ local function set_zbminil2_mode(device, mode)
     return
   end
 
+  if mode == nil then
+    print("ZBMINIL2 mode nil")
+    return
+  end
+
   local write = cluster_base.write_manufacturer_specific_attribute(
       device,
-      0xFC57, -- cluster
-      0x0000, -- attribute
-      0x1286, -- manufacturer
-      data_types.Uint8(mode)
+      0xFC57,     -- cluster
+      0x0000,     -- attribute
+      0x1286,     -- manufacturer
+      data_types.Uint8,  -- data type
+      mode               -- value
   )
+  
   device:send(write)
   print("ZBMINIL2 mode set:", mode)
 end
