@@ -34,7 +34,7 @@ local function set_switch_mode(driver, device)
   local value = 0
   if mode == "toggle" then
     value = 1
-  elseif mode == "detached" then
+  elseif mode == "momentary" then
     value = 2
   else
     value = 0
